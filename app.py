@@ -14,7 +14,7 @@ st.sidebar.title('Olympics Analysis')
 
 user_menu = st.sidebar.radio(
     'Select an Option',
-    ('Medal Tally', 'Overall Analysis', 'Country-wise Analysis', 'Athlete wise Analysis')
+    ('Medal Tally', 'Overall Analysis')
 )
 
 # st.dataframe(df)
@@ -89,10 +89,4 @@ if user_menu == 'Overall Analysis':
     ax = sns.heatmap(pivot_table, annot=True)
     st.pyplot(fig)
     
-    st.title('Top Medalist')
-    sport_list = df['Sport'].unique().tolist()
-    sport_list.sort()
-    sport_list.insert(0, 'Overall')
-    sport_selected = st.selectbox('Select a Sport', sport_list)
-    top_medalist = utils.most_successful(df, sport_selected)
-    st.table(top_medalist)
+    
