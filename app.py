@@ -1,6 +1,8 @@
 import streamlit as st 
 import utils
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import plotly.express as ex
 
 region_info = pd.read_csv('noc_regions.csv')
@@ -65,7 +67,32 @@ if user_menu == 'Overall Analysis':
         st.header('Athletes')
         st.title(athletes)
         
-    participating_nations = utils.participating_nations(df)
-    fig = ex.line(participating_nations, x='Edition', y='No. of Countries')
+    participating_nations_over_time = utils.analyse_over_time(df, 'region')
+    fig = ex.line(participating_nations_over_time, x='Edition', y='region')
     st.title('Participating Nations over the years')
     st.plotly_chart(fig)
+    
+    events_over_time = utils.analyse_over_time(df, 'Event')
+    fig = ex.line(events_over_time, x='Edition', y='Event')
+    st.title('Events over the years')
+    st.plotly_chart(fig)
+    
+    athletes_over_time = utils.analyse_over_time(df, 'Name')
+    fig = ex.line(athletes_over_time, x='Edition', y='Name')
+    st.title('Athletes over the years')
+    st.plotly_chart(fig)
+    
+    st.title('No. of Events over time considering every sport')
+    fig, ax = plt.subplots(figsize=(20,20))
+    x = df.drop_duplicates(['Year', 'Sport', 'Event'])
+    pivot_table = x.pivot_table(index='Sport', columns='Year', values='Event', aggfunc='count').fillna(0).astype(int)
+    ax = sns.heatmap(pivot_table, annot=True)
+    st.pyplot(fig)
+    
+    st.title('Top Medalist')
+    sport_list = df['Sport'].unique().tolist()
+    sport_list.sort()
+    sport_list.insert(0, 'Overall')
+    sport_selected = st.selectbox('Select a Sport', sport_list)
+    top_medalist = utils.most_successful(df, sport_selected)
+    st.table(top_medalist)

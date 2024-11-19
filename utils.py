@@ -48,8 +48,19 @@ def lists(df):
 
     return years, country
 
-def participating_nations(df):
-    participents_each_year = df.drop_duplicates(['Year', 'region'])['Year'].value_counts().reset_index().sort_values('index')
-    participents_each_year.rename(columns={'index':'Edition', 'Year': 'No. of Countries'}, inplace=True)
-    return participents_each_year
+def analyse_over_time(df, x):
     
+    df_for_each_year = df.drop_duplicates(['Year', x])['Year'].value_counts().reset_index().sort_values('Year')
+    df_for_each_year.rename(columns={'index':x, 'Year': 'Edition'}, inplace=True)
+
+    return df_for_each_year
+
+def most_successful(df, sport):
+    temp_df = df.dropna(subset=['Medal'])
+    if sport !='Overall':
+        temp_df = temp_df[temp_df['Sport'] == sport]
+        
+    x = temp_df['Name'].value_counts().reset_index().head(15).merge(df, left_on='index', right_on='Name', how='left')[['index', 'Name_x', 'Sport', 'region']].drop_duplicates('index')
+    
+    x = x.rename(columns = {'index':'Name', 'Name_x':'Medals'})
+    return x
