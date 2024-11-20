@@ -90,3 +90,9 @@ if user_menu == 'Overall Analysis':
     st.pyplot(fig)
     
     
+import os
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8501))  # Default Streamlit port
+    import streamlit.web.cli as stcli
+    stcli.main(["streamlit", "run", "app.py", "--server.port", str(port)])
